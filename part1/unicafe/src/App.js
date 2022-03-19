@@ -12,10 +12,10 @@ const App = () => {
     )
   }
 
-  const Display = ({text, number}) => {
+  const Display = ({text}) => {
     return (
       <div>
-        <p>{text} {number}</p>
+        <p>{text}</p>
       </div>
     )
   }
@@ -24,6 +24,17 @@ const App = () => {
   const onClickNeutral = () => setNeutral(neutral+1)
   const onClickBad = () => setBad(bad+1)
 
+  const all = good + neutral + bad
+  const average = (good-bad)/all
+  const positive = (good*100)/all
+
+  const displayGood = "good " + good 
+  const displayNeutral = "neutral " + neutral 
+  const displayBad = "bad " + bad
+  const displayAll = "all " + all
+  const displayAverage = "average " + average
+  const displayPositive = "positive " + positive + " %" 
+
   return (
     <div>
       <h1>give feedback</h1>
@@ -31,9 +42,12 @@ const App = () => {
       <Button onClick={onClickNeutral} text="neutral"/>
       <Button onClick={onClickBad} text="bad"/>
       <h1>statistics</h1>
-      <Display text="good" number={good}/>
-      <Display text="neutral" number={neutral}/>
-      <Display text="bad" number={bad}/>
+      <Display text={displayGood}/>
+      <Display text={displayNeutral}/>
+      <Display text={displayBad}/>
+      <Display text={displayAll}/>
+      <Display text={displayAverage}/>
+      <Display text={displayPositive}/>
     </div>
   )
 }
