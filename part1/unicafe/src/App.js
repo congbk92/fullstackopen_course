@@ -6,11 +6,12 @@ const Button = ({onClick, text}) => {
   )
 }
 
-const StatisticLine = ({text, value}) => {
+const StatisticLine = ({key, text, value}) => {
   return (
-    <div>
-      <p>{text} {value}</p>
-    </div>
+    <tr key={key}>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
   )
 }
 
@@ -25,15 +26,40 @@ const Statistics  = ({good, neutral, bad}) => {
       </div>
     )
   } else {
+    const statisticsInfo =
+      [
+        { 
+          text: "good",
+          value: good
+        },
+        {
+          text: "neutral",
+          value: neutral
+        },
+        {
+          text: "bad",
+          value: bad
+        },
+        {
+          text: "all",
+          value: all
+        },
+        {
+          text: "average",
+          value: average
+        },
+        {
+          text: "positive",
+          value: positive
+        },
+      ]
+      console.log(statisticsInfo)
     return (
-      <div>
-        <StatisticLine text="good" value={good}/>
-        <StatisticLine text="neutral" value={neutral}/>
-        <StatisticLine text="bad" value={bad}/>
-        <StatisticLine text="all" value={all}/>
-        <StatisticLine text="average" value={average}/>
-        <StatisticLine text="positive" value={positive}/>
-      </div>
+      <table>
+        {
+          statisticsInfo.map((value, index) => {return (<StatisticLine key={index} text={value.text} value={value.value}/>)})
+        }
+      </table>
     )
   }
 }
