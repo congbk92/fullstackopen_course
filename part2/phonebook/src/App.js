@@ -2,14 +2,14 @@ import { useState } from 'react'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { 
-      name: 'Arto Hellas',
-      number: '000-000-111',
-      id: 0
-    }
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [showWith, setNewShowWith] = useState('')
 
   const addPeople = (event) => {
     event.preventDefault()
@@ -20,7 +20,7 @@ const App = () => {
       const people = {
         name: newName,
         number: newNumber,
-        id: persons.length
+        id: persons.length + 1
       }
       setPersons(persons.concat(people))
       setNewName('')
@@ -36,10 +36,20 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const handleShowWithChange = (event) => {
+    setNewShowWith(event.target.value)
+  }
+
+  const personsToShow = persons.filter(people => people.name.toLowerCase().includes(showWith.toLowerCase()))
+
   return (
     <div>
       <h2>Phonebook</h2>
       <form onSubmit={addPeople}>
+        <div>
+          filter shown with: <input value={showWith} onChange={handleShowWithChange}/>
+        </div>
+        <h2>Add a new</h2>
         <div>
           name: <input value={newName} onChange={handleNameChange}/>
         </div>
@@ -51,8 +61,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map(people => <p key={people.id}>{people.name} {people.number}</p>)}
-      <h1>debug: {newName}</h1>
+      {personsToShow.map(people => <p key={people.id}>{people.name} {people.number}</p>)}
     </div>
   )
 }
