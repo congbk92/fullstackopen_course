@@ -9,27 +9,6 @@ const Input = ({text, value, handleOnChange}) => {
   )
 }
 
-const AddForm = ({onSubmit, newName, handleNameChange, newNumber, handleNumberChange}) => {
-  return (
-    <form onSubmit={onSubmit}>
-      <h2>Add a new</h2>
-      <Input text="name:" value={newName} handleOnChange={handleNameChange}/>
-      <Input text="number:" value={newNumber} handleOnChange={handleNumberChange}/>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  )
-}
-
-const ShowPeople = ({people}) => {
-  return (
-    <div>
-      <p>{people.name} {people.number}</p>
-    </div>
-  )
-}
-
 const ShowCountryName = ({country}) => {
   return (
     <div>
