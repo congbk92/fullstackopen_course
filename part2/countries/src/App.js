@@ -9,15 +9,21 @@ const Input = ({text, value, handleOnChange}) => {
   )
 }
 
-const ShowCountryName = ({country}) => {
+const ShowCountryInShort = ({country, showDetailHandler}) => {
+  const myStyle = {
+    display : "flex",
+    flexDirection: "row",
+    alignItems: "center"
+  }
   return (
-    <div>
+    <div style={myStyle}>
       <p>{country.name.common}</p>
+      <button onClick={() => showDetailHandler(country)}>show</button>
     </div>
   )
 }
 
-const ShowCountry = ({country}) => {
+const ShowCountryDetail = ({country}) => {
   console.log(Object.values(country.languages))
   console.log(country.flags.png)
   return (
@@ -34,18 +40,17 @@ const ShowCountry = ({country}) => {
   )
 }
 
-const ShowCountries = ({countries}) => {
-  console.log(countries)
+const ShowCountries = ({countries, showDetailHandler}) => {
   if (countries.length === 1){
     return (
       <div>
-        <ShowCountry country={countries[0]}/>
+        <ShowCountryDetail country={countries[0]}/>
       </div>
     )
   } else if (countries.length <= 10) {
     return (
       <div>
-        {countries.map(country => <ShowCountryName key={country.cca3} country={country}/>)}
+        {countries.map(country => <ShowCountryInShort key={country.cca3} country={country} showDetailHandler={showDetailHandler}/>)}
       </div>
     )
   } else {
@@ -58,8 +63,9 @@ const ShowCountries = ({countries}) => {
 }
 
 const App = () => {
-  const [countries, setCountries] = useState([]) 
-  const [showWith, setNewShowWith] = useState('')
+  const [allCountries, setAllCountries] = useState('')
+  const [searchText, setSearchText] = useState('')
+  const [showCountries, setShowCountries] = useState([])
   
   useEffect(() => {
     console.log("effect")
@@ -67,20 +73,28 @@ const App = () => {
       .get('https://restcountries.com/v3.1/all')
       .then(respone => {
         console.log('promise fulfilled')
-        setCountries(respone.data)
+        setAllCountries(respone.data)
+        setShowCountries(respone.data)
       })
   }, [])
 
-  const handleShowWithChange = (event) => {
-    setNewShowWith(event.target.value)
+  const handleSearchTextChange = (event) => {
+    setSearchText(event.target.value)
+    const countriesToShow = allCountries.filter(country => country.name.common.toLowerCase().includes(event.target.value.toLowerCase()))
+    setShowCountries(countriesToShow)
   }
-
-  const countriesToShow = countries.filter(country => country.name.common.toLowerCase().includes(showWith.toLowerCase()))
+ 
+  const handleShowCountryDetail = (countryToShowDetail) => {
+    console.log("handleShowCountryDetail")
+    console.log(countryToShowDetail)
+    const countriesToShow = allCountries.filter(country => country.cca3 === countryToShowDetail.cca3)
+    setShowCountries(countriesToShow)
+  }
 
   return (
     <div>
-      <Input text="find countries" value={showWith} handleOnChange={handleShowWithChange}/>
-      <ShowCountries countries={countriesToShow}/>
+      <Input text="find countries" value={searchText} handleOnChange={handleSearchTextChange}/>
+      <ShowCountries countries={showCountries} showDetailHandler={handleShowCountryDetail}/>
     </div>
   )
 }
