@@ -13,7 +13,8 @@ const ShowCountryInShort = ({country, showDetailHandler}) => {
   const myStyle = {
     display : "flex",
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    lineHeight: "1px"
   }
   return (
     <div style={myStyle}>
@@ -23,9 +24,44 @@ const ShowCountryInShort = ({country, showDetailHandler}) => {
   )
 }
 
+const ShowWeatherInfo = ({weatherInfo}) => {
+  const {city, temperature, wind, icon} = weatherInfo
+  const iconURL = `https://openweathermap.org/img/wn/${icon}@2x.png`
+  console.log("iconURL", iconURL)
+  return (
+    <div>
+    <h3>Weather in {city}</h3>
+    <p>temperature {temperature} Celcius</p>
+    <img src={iconURL} alt="weather icon"/>
+    <p>wind {wind} m/s</p>
+    </div>
+  )
+}
+
 const ShowCountryDetail = ({country}) => {
-  console.log(Object.values(country.languages))
-  console.log(country.flags.png)
+  console.log("Country info" , country)
+  const [weatherInfo, setWeatherInfo] = useState({})
+  const [lat, long] = country.capitalInfo.latlng
+  const api_key = process.env.REACT_APP_OPEN_WEATHER_API_KEY
+  const getWeatherAPI = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${api_key}`
+
+  useEffect(() => {
+    console.log("effect")
+    axios
+      .get(getWeatherAPI)
+      .then(respone => {
+        console.log('get weather promise fulfilled')
+        console.log("Weather info" , respone.data)
+        const newWeatherInfo = {
+          city: respone.data.name,
+          temperature: (respone.data.main.temp - 273.15).toFixed(2), // convert f to c
+          wind: respone.data.wind.speed,
+          icon: respone.data.weather[0].icon
+        }
+        setWeatherInfo(newWeatherInfo)
+      })
+  }, [getWeatherAPI])
+
   return (
     <div>
         <h2>{country.name.common}</h2>
@@ -36,6 +72,7 @@ const ShowCountryDetail = ({country}) => {
           {Object.values(country.languages).map((lang, idx) => <li key={idx}>{lang}</li>)}
         </ul>
         <img src={country.flags.png} alt="new"/>
+        <ShowWeatherInfo weatherInfo={weatherInfo}/>
     </div>
   )
 }
