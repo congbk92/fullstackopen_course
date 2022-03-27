@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import dbService from './services/persons'
 
 const Input = ({text, value, handleOnChange}) => {
   return (
@@ -47,8 +47,8 @@ const App = () => {
 
   useEffect(() => {
     console.log("effect")
-    axios
-      .get('http://localhost:3001/persons')
+    dbService
+      .getAll()
       .then(respone => {
         console.log('promise fulfilled')
         setPersons(respone.data)
@@ -66,9 +66,9 @@ const App = () => {
         number: newNumber,
         id: persons.length + 1
       }
-      
-      axios
-      .post('http://localhost:3001/persons', people)
+
+      dbService
+      .create(people)
       .then(response => {
         console.log(response)
       })
