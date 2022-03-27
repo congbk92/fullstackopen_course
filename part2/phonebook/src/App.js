@@ -47,12 +47,25 @@ const ShowPhoneBook = ({personsToShow, onDelete}) => {
   )
 }
 
+const Notification = ({ notiMessage }) => {
+  if (notiMessage === null) {
+    return null
+  }
+
+  return (
+    <div className={notiMessage.type}>
+      {notiMessage.message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchText, setSearchText] = useState('')
   const [showPersons, setShowPerson] = useState([])
+  const [notiMessage, setNotiMessage] = useState(null)
 
   useEffect(() => {
     console.log("effect")
@@ -82,14 +95,43 @@ const App = () => {
         .update(newPeople.id, newPeople)
         .then(response => {
           console.log(response)
+          setNotiMessage(
+            {
+              type: "info",
+              message: `Update ${newPeople.name}`
+            }
+          )
+          setTimeout(() => {
+            setNotiMessage(null)
+          }, 5000)
+    
+          const newPersons = persons.map(people => people.id === newPeople.id ? newPeople : people)
+          setPersons(newPersons)
+          setShowPerson(newPersons)
+          setNewName('')
+          setNewNumber('')
+          setSearchText('')
         })
-  
-        const newPersons = persons.map(people => people.id === newPeople.id ? newPeople : people)
-        setPersons(newPersons)
-        setShowPerson(newPersons)
-        setNewName('')
-        setNewNumber('')
-        setSearchText('')
+        .catch(error => {
+          console.log("update fail")
+          setNotiMessage(
+            {
+              type: "error",
+              message: `Infomation of ${newPeople.name} has already been removed from server`
+            }
+          )
+          setTimeout(() => {
+            setNotiMessage(null)
+          }, 5000)
+
+          const newPersons = persons.filter(people => people.id !== newPeople.id)
+          setPersons(newPersons)
+          setShowPerson(newPersons)
+          setNewName('')
+          setNewNumber('')
+          setSearchText('')
+
+        })
 
       } else {
         console.log("You pressed Cancel!");
@@ -113,6 +155,17 @@ const App = () => {
       setNewName('')
       setNewNumber('')
       setSearchText('')
+      
+      setNotiMessage(
+        {
+          type: "info",
+          message: `Add ${people.name}`
+        }
+      )
+      setTimeout(() => {
+        setNotiMessage(null)
+      }, 5000)
+
     }
   }
 
@@ -137,19 +190,41 @@ const App = () => {
     .remove(id)
     .then(() => {
       console.log("Finish delete")
+      const newPersons = persons.filter(people => people.id !== id)
+      setPersons(newPersons)
+      setShowPerson(newPersons)
+      setNewName('')
+      setNewNumber('')
+      setSearchText('')
+    })
+    .catch(error => {
+      console.log("delete fail")
+      const deletePeople = persons.filter(people => people.id === id)
+      setNotiMessage(
+        {
+          type: "error",
+          message: `Infomation of ${deletePeople[0].name} has already been removed from server`
+        }
+      )
+      setTimeout(() => {
+        setNotiMessage(null)
+      }, 5000)
+
+      const newPersons = persons.filter(people => people.id !== id)
+      setPersons(newPersons)
+      setShowPerson(newPersons)
+      setNewName('')
+      setNewNumber('')
+      setSearchText('')
+
     })
 
-    const newPersons = persons.filter(people => people.id !== id)
-    setPersons(newPersons)
-    setShowPerson(newPersons)
-    setNewName('')
-    setNewNumber('')
-    setSearchText('')
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notiMessage={notiMessage} />
       <Input text="filter shown with:" value={searchText} handleOnChange={handleSearchTextChange}/>
       <AddForm onSubmit={addPeople} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <ShowPhoneBook personsToShow={showPersons} onDelete={onDelete}/>
