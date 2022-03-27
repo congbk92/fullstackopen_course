@@ -22,19 +22,27 @@ const AddForm = ({onSubmit, newName, handleNameChange, newNumber, handleNumberCh
   )
 }
 
-const ShowPeople = ({people}) => {
+const ShowPeople = ({people, onDelete}) => {
+  const myStyle = {
+    display : "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    lineHeight: "1px"
+  }
+
   return (
-    <div>
+    <div style={myStyle}>
       <p>{people.name} {people.number}</p>
+      <button onClick={() => onDelete(people.id)}>delete</button>
     </div>
   )
 }
 
-const ShowPhoneBook = ({personsToShow}) => {
+const ShowPhoneBook = ({personsToShow, onDelete}) => {
   return (
     <div>
       <h2>Numbers</h2>
-      {personsToShow.map(people => <ShowPeople key={people.id} people={people}/>)}
+      {personsToShow.map(people => <ShowPeople key={people.id} people={people} onDelete={onDelete}/>)}
     </div>
   )
 }
@@ -43,7 +51,8 @@ const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [showWith, setNewShowWith] = useState('')
+  const [searchText, setSearchText] = useState('')
+  const [showPersons, setShowPerson] = useState([])
 
   useEffect(() => {
     console.log("effect")
@@ -52,6 +61,7 @@ const App = () => {
       .then(respone => {
         console.log('promise fulfilled')
         setPersons(respone.data)
+        setShowPerson(respone.data)
       })
   }, [])
 
@@ -64,7 +74,7 @@ const App = () => {
       const people = {
         name: newName,
         number: newNumber,
-        id: persons.length + 1
+        id: Math.max(...persons.map(people => people.id)) + 1
       }
 
       dbService
@@ -73,9 +83,12 @@ const App = () => {
         console.log(response)
       })
 
-      setPersons(persons.concat(people))
+      const newPersons = persons.concat(people)
+      setPersons(newPersons)
+      setShowPerson(newPersons)
       setNewName('')
       setNewNumber('')
+      setSearchText('')
     }
   }
 
@@ -87,18 +100,35 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-  const handleShowWithChange = (event) => {
-    setNewShowWith(event.target.value)
+  const handleSearchTextChange = (event) => {
+    const newSearchText = event.target.value
+    setSearchText(newSearchText)
+    const personsToShow = persons.filter(people => people.name.toLowerCase().includes(newSearchText.toLowerCase()))
+    setShowPerson(personsToShow) 
   }
 
-  const personsToShow = persons.filter(people => people.name.toLowerCase().includes(showWith.toLowerCase()))
+  const onDelete = (id) => {
+    console.log("delete", id)
+    dbService
+    .remove(id)
+    .then(() => {
+      console.log("Finish delete")
+    })
+
+    const newPersons = persons.filter(people => people.id !== id)
+    setPersons(newPersons)
+    setShowPerson(newPersons)
+    setNewName('')
+    setNewNumber('')
+    setSearchText('')
+  }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Input text="filter shown with:" value={showWith} handleOnChange={handleShowWithChange}/>
+      <Input text="filter shown with:" value={searchText} handleOnChange={handleSearchTextChange}/>
       <AddForm onSubmit={addPeople} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
-      <ShowPhoneBook personsToShow={personsToShow}/>
+      <ShowPhoneBook personsToShow={showPersons} onDelete={onDelete}/>
     </div>
   )
 }
