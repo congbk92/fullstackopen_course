@@ -64,12 +64,36 @@ const App = () => {
         setShowPerson(respone.data)
       })
   }, [])
-
+  
   const addPeople = (event) => {
     event.preventDefault()
-    const newPeopleExisted = persons.map(people => people.name).includes(newName)
-    if (newPeopleExisted){
-      alert(`${newName} is already added to phonebook`)
+    const updatePeople = persons.filter(people => people.name === newName)
+    console.log(updatePeople)
+    if (updatePeople.length > 0) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with the new one?`)) {
+        console.log("You pressed OK!");
+        const newPeople = {
+          name: newName,
+          number: newNumber,
+          id: updatePeople[0].id
+        }
+
+        dbService
+        .update(newPeople.id, newPeople)
+        .then(response => {
+          console.log(response)
+        })
+  
+        const newPersons = persons.map(people => people.id === newPeople.id ? newPeople : people)
+        setPersons(newPersons)
+        setShowPerson(newPersons)
+        setNewName('')
+        setNewNumber('')
+        setSearchText('')
+
+      } else {
+        console.log("You pressed Cancel!");
+      }
     } else {
       const people = {
         name: newName,
