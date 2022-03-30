@@ -58,28 +58,41 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 const generateId = () => {
-    const maxId= notes.length > 0 ? Math.max(...notes.map(note => note.id)) : n
+    const maxId= persons.length > 0 ? Math.max(...persons.map(people => people.id)) : 0
     return maxId + 1
 }
 
-app.post('/api/notes', (request, response) => {
+app.post('/api/persons', (request, response) => {
     const body = request.body
+    console.log(body)
 
-    if (!body.content) {
+    if (!body.name) {
         return response.status(400).json({
-            error: 'content missing'
+            error: 'name missing'
         })
     }
 
-    const note  = {
-        content: body.content,
-        important: body.content || false,
-        date: new Date(),
+    if (!body.number) {
+        return response.status(400).json({
+            error: 'number missing'
+        })
+    }
+
+    const people = persons.find(people => people.name === body.name)
+    if (people) {
+        return response.status(400).json({
+            error: 'name must be unique'
+        })
+    }
+
+    const newPeople  = {
+        name: body.name,
+        number: body.number,
         id: generateId(),
     }
-    console.log(note)
-    notes = notes.concat(note)
-    response.json(note)
+    console.log(newPeople)
+    persons = persons.concat(newPeople)
+    response.json(newPeople)
 })
 
 const PORT = 3001
