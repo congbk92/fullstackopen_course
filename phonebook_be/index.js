@@ -34,13 +34,13 @@ app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
 
-app.get('/api/note/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     console.log(id)
-    const note = notes.find(note => note.id === id)
-    console.log(note)
-    if (note) {
-        response.json(note)
+    const people = persons.find(people => people.id === id)
+    console.log(people)
+    if (people) {
+        response.json(people)
     } else {
         response.status(404).end()
     }
