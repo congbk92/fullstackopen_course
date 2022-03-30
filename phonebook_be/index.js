@@ -46,11 +46,10 @@ app.get('/api/note/:id', (request, response) => {
     }
 })
 
-/*
+
 app.get('/info', (request, response) => {
     response.send(`Phonebook has info for ${persons.length} people<br>${Date()}`)
 })
-*/
 
 app.delete('/api/note/:id', (request, response) => {
     const id = Number(request.params.id)
