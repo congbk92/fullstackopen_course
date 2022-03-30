@@ -30,6 +30,10 @@ app.get('/' , (request, response) => {
     response.send('Hello World')
 })
 
+app.get('/info', (request, response) => {
+    response.send(`Phonebook has info for ${persons.length} people<br>${Date()}`)
+})
+
 app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
@@ -46,17 +50,12 @@ app.get('/api/persons/:id', (request, response) => {
     }
 })
 
-
-app.get('/info', (request, response) => {
-    response.send(`Phonebook has info for ${persons.length} people<br>${Date()}`)
-})
-
-app.delete('/api/note/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    console.log(`delete note ${id}`)
-    notes = notes.filter(note => note.id !== id)
+    console.log(`delete people ${id}`)
+    persons = persons.filter(people => people.id !== id)
     response.status(204).end()
-  })
+})
 
 const generateId = () => {
     const maxId= notes.length > 0 ? Math.max(...notes.map(note => note.id)) : n
