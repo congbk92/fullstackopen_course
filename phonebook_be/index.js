@@ -4,6 +4,7 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
+const { response } = require('express')
 
 const app = express()
 app.use(cors())
@@ -116,6 +117,17 @@ app.post('/api/persons', (request, response) => {
         response.json(savedPeople)
     })
 })
+
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name = 'CastError'){
+        return response.status(400).send({error: 'malformatted id'})
+    }
+}
+
+app.use(errorHandler)
 
 const PORT =  process.env.PORT || 3001
 app.listen(PORT, () => {
