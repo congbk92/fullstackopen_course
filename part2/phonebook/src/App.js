@@ -139,8 +139,7 @@ const App = () => {
     } else {
       const people = {
         name: newName,
-        number: newNumber,
-        id: Math.max(...persons.map(people => people.id)) + 1
+        number: newNumber
       }
 
       dbService
@@ -157,7 +156,7 @@ const App = () => {
         setTimeout(() => {
           setNotiMessage(null)
         }, 5000)
-        const newPersons = persons.concat(people)
+        const newPersons = persons.concat(response.data)
         setPersons(newPersons)
         setShowPerson(newPersons)
 
