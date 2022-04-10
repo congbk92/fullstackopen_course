@@ -98,7 +98,7 @@ const generateId = () => {
     return maxId + 1
 }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
     console.log("Add people ", body)
     if (!body.name) {
@@ -125,17 +125,22 @@ app.post('/api/persons', (request, response) => {
         number: body.number,
     })
 
-    people.save().then(savedPeople => {
-        response.json(savedPeople)
-    })
+    people.save()
+        .then(savedPeople => {
+            response.json(savedPeople)
+        })
+        .catch(error => next(error))
 })
 
 
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
 
-    if (error.name = 'CastError'){
+    if (error.name === 'CastError'){
         return response.status(400).send({error: 'malformatted id'})
+    } else if (error.name === 'ValidationError'){
+        console.error('ValidationError')
+        return response.status(400).send({error: error.message})
     }
 }
 

@@ -146,26 +146,40 @@ const App = () => {
       dbService
       .create(people)
       .then(response => {
+        console.log("Success")
         console.log(response)
+        setNotiMessage(
+          {
+            type: "info",
+            message: `Add ${people.name}`
+          }
+        )
+        setTimeout(() => {
+          setNotiMessage(null)
+        }, 5000)
+        const newPersons = persons.concat(people)
+        setPersons(newPersons)
+        setShowPerson(newPersons)
+
+      })
+      .catch(error => {
+        console.log("Fail")
+        console.log(error.response.data.error)
+        setNotiMessage(
+          {
+            type: "error",
+            message: error.response.data.error
+          }
+        )
+        setTimeout(() => {
+          setNotiMessage(null)
+        }, 5000)
+
       })
 
-      const newPersons = persons.concat(people)
-      setPersons(newPersons)
-      setShowPerson(newPersons)
       setNewName('')
       setNewNumber('')
       setSearchText('')
-      
-      setNotiMessage(
-        {
-          type: "info",
-          message: `Add ${people.name}`
-        }
-      )
-      setTimeout(() => {
-        setNotiMessage(null)
-      }, 5000)
-
     }
   }
 
