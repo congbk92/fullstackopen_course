@@ -1,3 +1,5 @@
+const { count } = require("../model/blog")
+
 const dummy = (blogs) => {
   // ...
   return 1
@@ -13,6 +15,24 @@ const favoriteBlog = (blogs) => {
   return blogs.reduce((acc, val) => {return acc.likes > val.likes ? acc : val}, blogs[0])
 }
 
+const mostBlogs = (blogs) => {
+  if (blogs.length == 0) return {}
+  countBlogs = blogs.reduce((acc, val) => {
+    if (val.author in acc) {
+      acc[val.author] += 1
+    } else {
+      acc = {...acc, [val.author]: 1}
+    }
+    return acc
+  }, {})
+
+const countList = Object.keys(countBlogs).map((key) => {return {
+                                                        'author': key,
+                                                        'blogs': countBlogs[key]}})
+return countList.reduce((acc, val) => 
+      {return acc.blogs > val.blogs ? acc : val}, countList[0])
+}
+
 module.exports = {
-  dummy, totalLikes, favoriteBlog
+  dummy, totalLikes, favoriteBlog, mostBlogs
 }

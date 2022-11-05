@@ -130,3 +130,64 @@ describe('the most favourite blog', () => {
         })
     })
 })
+
+describe('the author who has largest amount of blogs', () => {
+    const emptyBlog = [
+    ]
+    
+    test('when list has not any blog, the resut empty', () => {
+    const result = listHelper.mostBlogs(emptyBlog)
+    expect(result).toEqual({})
+    })
+
+    const listWithNBlog = [
+        {
+          _id: '5a422aa71b54a676234d17f8',
+          title: 'Go To Statement Considered Harmful',
+          author: 'Edsger W. Dijkstra',
+          url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+          likes: 5,
+          __v: 0
+        },
+        {
+            _id: '5a422aa71b54a676234d17f8',
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 6,
+            __v: 0
+        },
+        {
+            _id: '5a422aa71b54a676234d17f8',
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 7,
+            __v: 0
+        },
+        {
+            _id: '5a422aa71b54a676234d17f8',
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 8,
+            __v: 0
+        },
+        {
+            _id: '5a422aa71b54a676234d17f8',
+            title: 'Go To Statement Considered Harmful',
+            author: 'Robert C. Martin',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+            likes: 8,
+            __v: 0
+        }
+    ]
+    
+    test('when list has many blogs, the result is the author who has largest amount of blogs', () => {
+        const result = listHelper.mostBlogs(listWithNBlog)
+        expect(result).toEqual({
+            author: 'Edsger W. Dijkstra',
+            blogs: 4
+        })
+    })
+})
